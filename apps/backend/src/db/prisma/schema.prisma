@@ -1,0 +1,97 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model users {
+  id                String      @id @default(dbgenerated("(uuid())"))
+  email             String      @unique(map: "email") @db.VarChar(255)
+  password_hash     String?     @db.VarChar(255)
+  full_name         String      @db.VarChar(100)
+  avatar_url        String?     @db.VarChar(500)
+  phone             String?     @db.VarChar(20)
+  user_type         String      @db.VarChar(50)
+  status            String      @default("active") @db.VarChar(20)
+  sso_provider      String?     @db.VarChar(50)
+  sso_user_id       String?     @db.VarChar(255)
+  last_login_at     DateTime?   @db.Timestamp(6)
+  created_at        DateTime    @default(now()) @db.Timestamp(6)
+  updated_at        DateTime    @default(now()) @db.Timestamp(6)
+  customers_created customers[] @relation("CustomerCreator")
+  customers         customers?
+
+  @@unique([sso_provider, sso_user_id])
+  @@index([email])
+  @@index([user_type])
+  @@index([status])
+  @@index([sso_provider])
+  @@index([sso_user_id])
+}
+
+model customer_company_metadata {
+  id           String      @id @default(dbgenerated("(uuid())"))
+  company_name String      @db.VarChar(255)
+  created_at   DateTime    @default(now()) @db.Timestamp(6)
+  updated_at   DateTime    @default(now()) @db.Timestamp(6)
+  customers    customers[]
+
+  @@index([company_name])
+}
+
+model customers {
+  id            String                    @id @default(dbgenerated("(uuid())"))
+  user_id       String                    @unique
+  customer_name String                    @db.VarChar(255)
+  contact_email String                    @db.VarChar(255)
+  contact_phone String?                   @db.VarChar(20)
+  company_id    String
+  company_name  String?                   @db.VarChar(255)
+  location      Json?
+  status        String                    @default("active") @db.VarChar(20)
+  total_events  Int                       @default(0)
+  created_by    String
+  created_at    DateTime                  @default(now()) @db.Timestamp(6)
+  updated_at    DateTime                  @default(now()) @db.Timestamp(6)
+  company       customer_company_metadata @relation(fields: [company_id], references: [id])
+  creator       users                     @relation("CustomerCreator", fields: [created_by], references: [id])
+  user          users                     @relation(fields: [user_id], references: [id])
+
+  @@index([user_id])
+  @@index([status])
+  @@index([created_by])
+  @@index([company_id])
+}
+
+model events {
+  id                   String   @id @default(dbgenerated("(uuid())"))
+  customer_id          String
+  event_name           String   @db.VarChar(255)
+  event_type           String?  @db.VarChar(100)
+  event_description    String?  @db.Text
+  venue_address        Json
+  start_date           DateTime @db.Date
+  end_date             DateTime @db.Date
+  booking_start_date   DateTime @db.Date
+  booking_end_date     DateTime @db.Date
+  currency_type        String   @db.VarChar(20)
+  status               String   @default("draft") @db.VarChar(20)
+  logo_url             String?  @db.VarChar(500)
+  support_first_name   String?  @db.VarChar(255)
+  support_last_name    String?  @db.VarChar(255)
+  support_email        String?  @db.VarChar(255)
+  support_phone_number String?  @db.VarChar(255)
+  support_url          String?  @db.VarChar(500)
+  event_category_type  String   @default("general") @db.VarChar(20)
+  created_at           DateTime @default(now()) @db.Timestamp(6)
+  updated_at           DateTime @default(now()) @db.Timestamp(6)
+
+  @@index([customer_id], map: "idx_events_customer_id")
+  @@index([status], map: "idx_events_status")
+  @@index([start_date], map: "idx_events_start_date")
+  @@index([end_date], map: "idx_events_end_date")
+  @@map("events")
+}
