@@ -8,7 +8,7 @@ const config = {
   experimental: { instrumentationHook: true },
   //TODO: Dummy image domains need to be removed
   images: {
-    domains: ["avatar.vercel.sh","images.unsplash.com"],
+    domains: ["avatar.vercel.sh","images.unsplash.com","example.com"],
   },
   rewrites() {
     return []

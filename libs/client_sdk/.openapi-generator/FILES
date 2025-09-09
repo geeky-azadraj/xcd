@@ -1,6 +1,5 @@
 .gitignore
 .npmignore
-.openapi-generator-ignore
 README.md
 package.json
 src/apis/AuthenticationApi.ts
@@ -18,12 +17,16 @@ src/models/CreateEventDto.ts
 src/models/CreateEventResponseDto.ts
 src/models/CreateUserDto.ts
 src/models/CustomerListResponseDto.ts
+src/models/CustomerMetadataItemDto.ts
 src/models/CustomerResponseDto.ts
+src/models/CustomersMetadataListResponseDto.ts
 src/models/EventListItemDto.ts
 src/models/EventListResponseDto.ts
+src/models/EventMetadataItemDto.ts
 src/models/EventOverviewResponseDto.ts
 src/models/EventVenueDto.ts
 src/models/EventVenueResponseDto.ts
+src/models/EventsMetadataListResponseDto.ts
 src/models/HealthControllerCheckV1200Response.ts
 src/models/HealthControllerCheckV1200ResponseInfoValue.ts
 src/models/HealthControllerCheckV1503Response.ts

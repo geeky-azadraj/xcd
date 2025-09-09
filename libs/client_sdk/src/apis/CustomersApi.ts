@@ -18,6 +18,7 @@ import type {
   CreateCustomerDto,
   CustomerListResponseDto,
   CustomerResponseDto,
+  CustomersMetadataListResponseDto,
   ToggleStatusDto,
   UpdateCustomerDto,
 } from '../models/index';
@@ -28,6 +29,8 @@ import {
     CustomerListResponseDtoToJSON,
     CustomerResponseDtoFromJSON,
     CustomerResponseDtoToJSON,
+    CustomersMetadataListResponseDtoFromJSON,
+    CustomersMetadataListResponseDtoToJSON,
     ToggleStatusDtoFromJSON,
     ToggleStatusDtoToJSON,
     UpdateCustomerDtoFromJSON,
@@ -41,18 +44,22 @@ export interface CustomerControllerCreateV1Request {
 export interface CustomerControllerFindAllV1Request {
     page?: number;
     limit?: number;
+    search?: string;
+    status?: CustomerControllerFindAllV1StatusEnum;
+    sortBy?: CustomerControllerFindAllV1SortByEnum;
+    sortOrder?: CustomerControllerFindAllV1SortOrderEnum;
 }
 
 export interface CustomerControllerFindByCompanyV1Request {
     companyId: string;
 }
 
-export interface CustomerControllerFindByStatusV1Request {
-    status: string;
-}
-
 export interface CustomerControllerFindOneV1Request {
     customerId: string;
+}
+
+export interface CustomerControllerGetCustomersMetadataV1Request {
+    search?: string;
 }
 
 export interface CustomerControllerRemoveV1Request {
@@ -115,7 +122,7 @@ export class CustomersApi extends runtime.BaseAPI {
     }
 
     /**
-     * Get all customers with pagination
+     * Get all customers with pagination, search, filters, and sorting
      */
     async customerControllerFindAllV1Raw(requestParameters: CustomerControllerFindAllV1Request, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CustomerListResponseDto>> {
         const queryParameters: any = {};
@@ -126,6 +133,22 @@ export class CustomersApi extends runtime.BaseAPI {
 
         if (requestParameters['limit'] != null) {
             queryParameters['limit'] = requestParameters['limit'];
+        }
+
+        if (requestParameters['search'] != null) {
+            queryParameters['search'] = requestParameters['search'];
+        }
+
+        if (requestParameters['status'] != null) {
+            queryParameters['status'] = requestParameters['status'];
+        }
+
+        if (requestParameters['sortBy'] != null) {
+            queryParameters['sortBy'] = requestParameters['sortBy'];
+        }
+
+        if (requestParameters['sortOrder'] != null) {
+            queryParameters['sortOrder'] = requestParameters['sortOrder'];
         }
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -141,7 +164,7 @@ export class CustomersApi extends runtime.BaseAPI {
     }
 
     /**
-     * Get all customers with pagination
+     * Get all customers with pagination, search, filters, and sorting
      */
     async customerControllerFindAllV1(requestParameters: CustomerControllerFindAllV1Request = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CustomerListResponseDto> {
         const response = await this.customerControllerFindAllV1Raw(requestParameters, initOverrides);
@@ -182,39 +205,6 @@ export class CustomersApi extends runtime.BaseAPI {
     }
 
     /**
-     * Get customers by status
-     */
-    async customerControllerFindByStatusV1Raw(requestParameters: CustomerControllerFindByStatusV1Request, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<CustomerResponseDto>>> {
-        if (requestParameters['status'] == null) {
-            throw new runtime.RequiredError(
-                'status',
-                'Required parameter "status" was null or undefined when calling customerControllerFindByStatusV1().'
-            );
-        }
-
-        const queryParameters: any = {};
-
-        const headerParameters: runtime.HTTPHeaders = {};
-
-        const response = await this.request({
-            path: `/v1/customers/status/{status}`.replace(`{${"status"}}`, encodeURIComponent(String(requestParameters['status']))),
-            method: 'GET',
-            headers: headerParameters,
-            query: queryParameters,
-        }, initOverrides);
-
-        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(CustomerResponseDtoFromJSON));
-    }
-
-    /**
-     * Get customers by status
-     */
-    async customerControllerFindByStatusV1(requestParameters: CustomerControllerFindByStatusV1Request, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<CustomerResponseDto>> {
-        const response = await this.customerControllerFindByStatusV1Raw(requestParameters, initOverrides);
-        return await response.value();
-    }
-
-    /**
      * Get customer by ID
      */
     async customerControllerFindOneV1Raw(requestParameters: CustomerControllerFindOneV1Request, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CustomerResponseDto>> {
@@ -244,6 +234,36 @@ export class CustomersApi extends runtime.BaseAPI {
      */
     async customerControllerFindOneV1(requestParameters: CustomerControllerFindOneV1Request, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CustomerResponseDto> {
         const response = await this.customerControllerFindOneV1Raw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Get all customers metadata
+     */
+    async customerControllerGetCustomersMetadataV1Raw(requestParameters: CustomerControllerGetCustomersMetadataV1Request, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<CustomersMetadataListResponseDto>> {
+        const queryParameters: any = {};
+
+        if (requestParameters['search'] != null) {
+            queryParameters['search'] = requestParameters['search'];
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/v1/customers/dropdown`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => CustomersMetadataListResponseDtoFromJSON(jsonValue));
+    }
+
+    /**
+     * Get all customers metadata
+     */
+    async customerControllerGetCustomersMetadataV1(requestParameters: CustomerControllerGetCustomersMetadataV1Request = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<CustomersMetadataListResponseDto> {
+        const response = await this.customerControllerGetCustomersMetadataV1Raw(requestParameters, initOverrides);
         return await response.value();
     }
 
@@ -403,3 +423,30 @@ export class CustomersApi extends runtime.BaseAPI {
     }
 
 }
+
+/**
+ * @export
+ */
+export const CustomerControllerFindAllV1StatusEnum = {
+    Active: 'active',
+    Inactive: 'inactive',
+    Deleted: 'deleted'
+} as const;
+export type CustomerControllerFindAllV1StatusEnum = typeof CustomerControllerFindAllV1StatusEnum[keyof typeof CustomerControllerFindAllV1StatusEnum];
+/**
+ * @export
+ */
+export const CustomerControllerFindAllV1SortByEnum = {
+    CreatedDate: 'created_date',
+    CustomerName: 'customer_name',
+    ContactEmail: 'contact_email'
+} as const;
+export type CustomerControllerFindAllV1SortByEnum = typeof CustomerControllerFindAllV1SortByEnum[keyof typeof CustomerControllerFindAllV1SortByEnum];
+/**
+ * @export
+ */
+export const CustomerControllerFindAllV1SortOrderEnum = {
+    Asc: 'asc',
+    Desc: 'desc'
+} as const;
+export type CustomerControllerFindAllV1SortOrderEnum = typeof CustomerControllerFindAllV1SortOrderEnum[keyof typeof CustomerControllerFindAllV1SortOrderEnum];

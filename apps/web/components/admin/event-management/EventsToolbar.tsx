@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger 
 } from "@/components/ui/dropdown-menu";
 import { ChevronUp, ChevronDown, ArrowUpDown } from "lucide-react";
-import { mockEvents } from "@/app/admin/(event-management)/[userId]/my-events/data";
+import { mockEvents } from "@/app/admin/(main)/(event-management)/[userId]/my-events/data";
 import { SearchWithSuggestions } from "@/components/shared-layouts/SearchWithSuggestions";
 import { AddButton } from "@/components/shared-layouts/AddEventButton";
 

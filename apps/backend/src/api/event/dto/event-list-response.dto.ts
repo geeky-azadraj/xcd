@@ -1,6 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 export class EventListItemDto {
+  @ApiProperty({ description: 'Id of the event', format: 'string'})
+  id: string;
+  
   @ApiProperty({ description: 'Event logo URL', format: 'uri' })
   eventLogo: string;
 

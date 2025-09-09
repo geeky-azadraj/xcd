@@ -8,8 +8,6 @@ CREATE TABLE `users` (
     `phone` VARCHAR(20) NULL,
     `user_type` VARCHAR(50) NOT NULL,
     `status` VARCHAR(20) NOT NULL DEFAULT 'active',
-    `sso_provider` VARCHAR(50) NULL,
-    `sso_user_id` VARCHAR(255) NULL,
     `last_login_at` TIMESTAMP(6) NULL,
     `created_at` TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
     `updated_at` TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
@@ -18,9 +16,6 @@ CREATE TABLE `users` (
     INDEX `users_email_idx`(`email`),
     INDEX `users_user_type_idx`(`user_type`),
     INDEX `users_status_idx`(`status`),
-    INDEX `users_sso_provider_idx`(`sso_provider`),
-    INDEX `users_sso_user_id_idx`(`sso_user_id`),
-    UNIQUE INDEX `users_sso_provider_sso_user_id_key`(`sso_provider`, `sso_user_id`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
@@ -34,6 +29,18 @@ CREATE TABLE `customer_company_metadata` (
     INDEX `customer_company_metadata_company_name_idx`(`company_name`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+
+CREATE TABLE `event_metadata` (
+    `id` VARCHAR(191) NOT NULL DEFAULT (UUID()),
+    `event_name` VARCHAR(255) NOT NULL,
+    `created_at` TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+    `updated_at` TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+
+    INDEX `event_metadata_event_name_idx`(`event_name`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
 
 -- CreateTable
 CREATE TABLE `customers` (

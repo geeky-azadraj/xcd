@@ -13,12 +13,10 @@ export interface LocationAddress {
 }
 
 export interface CustomerLocation {
-  type?: 'Point' | 'Address' | 'Custom';
-  coordinates?: [number, number];
-  address?: LocationAddress;
-  custom?: Record<string, any>;
-  timezone?: string;
-  formatted?: string; // Human-readable formatted address
+  type: string;
+  coordinates: number[];
+  timezone: string;
+  address: string;
 }
 
 // Helper function to validate location structure
@@ -27,18 +25,23 @@ export function isValidLocation(location: any): location is CustomerLocation {
     return false;
   }
 
-  // If coordinates are provided, they must be valid
-  if (location.coordinates) {
-    if (!Array.isArray(location.coordinates) || 
-        location.coordinates.length !== 2 ||
-        typeof location.coordinates[0] !== 'number' ||
-        typeof location.coordinates[1] !== 'number') {
-      return false;
-    }
+  // Check required fields
+  if (!location.type || !location.coordinates || !location.timezone || !location.address) {
+    return false;
   }
 
-  // If address is provided, it must be an object
-  if (location.address && typeof location.address !== 'object') {
+  // Validate coordinates array
+  if (!Array.isArray(location.coordinates) || 
+      location.coordinates.length !== 2 ||
+      typeof location.coordinates[0] !== 'number' ||
+      typeof location.coordinates[1] !== 'number') {
+    return false;
+  }
+
+  // Validate string fields
+  if (typeof location.type !== 'string' || 
+      typeof location.timezone !== 'string' || 
+      typeof location.address !== 'string') {
     return false;
   }
 

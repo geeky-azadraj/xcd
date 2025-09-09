@@ -19,6 +19,7 @@ import type {
   CreateEventResponseDto,
   EventListResponseDto,
   EventOverviewResponseDto,
+  EventsMetadataListResponseDto,
 } from '../models/index';
 import {
     CreateEventDtoFromJSON,
@@ -29,6 +30,8 @@ import {
     EventListResponseDtoToJSON,
     EventOverviewResponseDtoFromJSON,
     EventOverviewResponseDtoToJSON,
+    EventsMetadataListResponseDtoFromJSON,
+    EventsMetadataListResponseDtoToJSON,
 } from '../models/index';
 
 export interface EventControllerCreateEventV1Request {
@@ -44,6 +47,10 @@ export interface EventControllerGetEventsByCustomerV1Request {
     dateAdded?: string;
     lastModified?: string;
     upcoming?: string;
+    search?: string;
+}
+
+export interface EventControllerGetEventsMetadataV1Request {
     search?: string;
 }
 
@@ -164,6 +171,36 @@ export class EventApi extends runtime.BaseAPI {
      */
     async eventControllerGetEventsByCustomerV1(requestParameters: EventControllerGetEventsByCustomerV1Request = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<EventListResponseDto> {
         const response = await this.eventControllerGetEventsByCustomerV1Raw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Get all events metadata
+     */
+    async eventControllerGetEventsMetadataV1Raw(requestParameters: EventControllerGetEventsMetadataV1Request, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<EventsMetadataListResponseDto>> {
+        const queryParameters: any = {};
+
+        if (requestParameters['search'] != null) {
+            queryParameters['search'] = requestParameters['search'];
+        }
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/v1/events/dropdown`,
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => EventsMetadataListResponseDtoFromJSON(jsonValue));
+    }
+
+    /**
+     * Get all events metadata
+     */
+    async eventControllerGetEventsMetadataV1(requestParameters: EventControllerGetEventsMetadataV1Request = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<EventsMetadataListResponseDto> {
+        const response = await this.eventControllerGetEventsMetadataV1Raw(requestParameters, initOverrides);
         return await response.value();
     }
 

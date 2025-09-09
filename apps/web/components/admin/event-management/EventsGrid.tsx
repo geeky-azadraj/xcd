@@ -1,10 +1,9 @@
 "use client"
 
 import EventCard from "./EventCard";
-import { mockEvents, MockEventData } from "@/app/admin/(event-management)/[userId]/my-events/data";
 import {useState, useEffect, useMemo} from "react"
 import { LoadingSpinner } from "@/components/shared-layouts/LoadingSpinner"
-import { TabKey } from "@/app/admin/(event-management)/[userId]/my-events/page"
+import type { TabKey } from "@/components/admin/event-management/types"
 import { SortOption } from "./EventsToolbar"
 
 interface EventsGridProps {
@@ -12,15 +11,14 @@ interface EventsGridProps {
     activeTab: TabKey
     searchQuery?: string
     sortBy?: SortOption
+    events?: any[] // Array of events from API
 }
 
-function EventsGrid({ userId, activeTab, searchQuery = "", sortBy = "dateAdded" }: EventsGridProps){
+function EventsGrid({ userId, activeTab, searchQuery = "", sortBy = "dateAdded", events }: EventsGridProps){
 
     const [isLoading, setIsLoading] = useState(true);
-    // Filter initial events by userId
-    const [events, setEvents] = useState<MockEventData[]>(
-        mockEvents.filter(event => event.userId === userId)
-    );
+    // Use real events data from API
+    const [eventsData, setEventsData] = useState<any[]>([]);
 
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -30,45 +28,44 @@ function EventsGrid({ userId, activeTab, searchQuery = "", sortBy = "dateAdded" 
             return () => clearTimeout(timer)
     },[])
 
-    // Update events when userId changes
+    // Update events when events prop changes
     useEffect(() => {
-        setEvents(mockEvents.filter(event => event.userId === userId))
-    }, [userId])
+        if (events && events.length > 0) {
+            setEventsData(events)
+        }
+    }, [events])
 
     const handleActivate = (id: string) => {
-        setEvents(prevEvents => 
+        setEventsData(prevEvents => 
             prevEvents.map(event => 
-                event.id === id ? { ...event, status: 'ACTIVE' as const } : event
+                event.id === id ? { ...event, status: 'active' as const } : event
             )
         );
     }
 
     const handleDeactivate = (id: string) => {
-        setEvents(prevEvents => 
+        setEventsData(prevEvents => 
             prevEvents.map(event => 
-                event.id === id ? { ...event, status: 'INACTIVE' as const } : event
+                event.id === id ? { ...event, status: 'inactive' as const } : event
             )
         );
     }
 
     const handleDelete = (id: string) => {
-        setEvents(prevEvents => prevEvents.filter(event => event.id !== id));
+        setEventsData(prevEvents => prevEvents.filter(event => event.id !== id));
     }
 
-    // Filter and sort events based on userId, active tab, search query, and sort option
+    // Filter and sort events based on active tab, search query, and sort option
     const filteredEvents = useMemo(() => {
-        // TODO: When integrating with API, filtering and sorting will be done server-side
-        // Example: GET /api/events?userId=user-123&status=active&search=tedx&sortBy=dateAdded
-        
-        let filtered = events; // events are already filtered by userId
+        let filtered = eventsData;
         
         // Apply status filter
         switch (activeTab) {
             case 'active':
-                filtered = filtered.filter(event => event.status === 'ACTIVE');
+                filtered = filtered.filter(event => event.status === 'active');
                 break;
             case 'inactive':
-                filtered = filtered.filter(event => event.status === 'INACTIVE');
+                filtered = filtered.filter(event => event.status === 'inactive');
                 break;
             case 'all':
             default:
@@ -98,19 +95,14 @@ function EventsGrid({ userId, activeTab, searchQuery = "", sortBy = "dateAdded" 
         });
         
         return sorted;
-    }, [events, activeTab, searchQuery, sortBy]);
+    }, [eventsData, activeTab, searchQuery, sortBy]);
 
-    // Simulate loading when filters change
+    // Handle loading state when events change
     useEffect(() => {
-        setIsLoading(true);
-        // TODO: Replace with actual API call when integrating
-        // Example: fetchEvents({ status: activeTab, search: searchQuery, sortBy })
-        const timer = setTimeout(() => {
+        if (events) {
             setIsLoading(false);
-        }, 300); // Short delay to simulate API call
-
-        return () => clearTimeout(timer);
-    }, [activeTab, searchQuery, sortBy]);
+        }
+    }, [events]);
 
     if (isLoading) {
         return (

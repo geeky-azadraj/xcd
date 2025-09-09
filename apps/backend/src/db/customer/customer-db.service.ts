@@ -2,13 +2,42 @@ import { Injectable, NotFoundException, BadRequestException } from '@nestjs/comm
 import { CreateCustomerDto } from '../../api/customer/dto/create-customer.dto';
 import { UpdateCustomerDto } from '../../api/customer/dto/update-customer.dto';
 import { CustomerResponseDto } from '../../api/customer/dto/customer-response.dto';
-import { PaginationDto, PaginationDetailsDto } from '../../common/dto/pagination.dto';
+import { CustomerListQueryDto } from '../../api/customer/dto/customer-list-query.dto';
+import { PaginationDetailsDto } from '../../common/dto/pagination.dto';
 import { CustomerLocation, isValidLocation } from '../../api/customer/interfaces/location.interface';
 import { CustomerDbRepository } from './customer-db.repository';
 
 @Injectable()
 export class CustomerDbService {
   constructor(private readonly customerRepository: CustomerDbRepository) {}
+
+  async createCustomer(
+    createCustomerDto: CreateCustomerDto, 
+    createdBy: string, 
+    userId: string,
+    companyId: string,
+    companyName: string
+  ): Promise<CustomerResponseDto> {
+    if (createCustomerDto.location && !isValidLocation(createCustomerDto.location)) {
+      throw new BadRequestException('Invalid location format');
+    }
+
+    const created = await this.customerRepository.create({
+      user_id: userId,
+      customer_name: createCustomerDto.customerName,
+      contact_email: createCustomerDto.contactEmail,
+      contact_phone: createCustomerDto.contactPhone ?? null,
+      company_id: companyId,
+      company_name: companyName,
+      location: (createCustomerDto.location as any) ?? null,
+      country_code: createCustomerDto.countryCode ?? null,
+      status: 'active',
+      total_events: 0,
+      created_by: createdBy,
+    });
+
+    return this.mapDbToDto(created);
+  }
 
   private mapDbToDto(record: any): CustomerResponseDto {
     return {
@@ -20,6 +49,7 @@ export class CustomerDbService {
       companyId: record.company_id,
       companyName: record.company_name ?? undefined,
       location: (record.location as CustomerLocation) ?? undefined,
+      countryCode: record.country_code ?? undefined,
       status: record.status,
       totalEvents: record.total_events,
       createdBy: record.created_by,
@@ -28,58 +58,79 @@ export class CustomerDbService {
     };
   }
 
-  async createCustomer(createCustomerDto: CreateCustomerDto, createdBy: string): Promise<CustomerResponseDto> {
-    if (createCustomerDto.location && !isValidLocation(createCustomerDto.location)) {
-      throw new BadRequestException('Invalid location format');
-    }
-    console.log("createdBy", createdBy);
 
-    const created = await this.customerRepository.create({
-      user_id: createCustomerDto.userId,
-      customer_name: createCustomerDto.customerName,
-      contact_email: createCustomerDto.contactEmail,
-      contact_phone: createCustomerDto.contactPhone ?? null,
-      company_id: createCustomerDto.companyId,
-      company_name: createCustomerDto.companyName ?? null,
-      location: (createCustomerDto.location as any) ?? null,
-      status: createCustomerDto.status || 'active',
-      total_events: createCustomerDto.totalEvents ?? 0,
-      created_by: createdBy,
-    });
-
-    return this.mapDbToDto(created);
-  }
-
-  async getAllCustomers(paginationDto: PaginationDto): Promise<{ data: CustomerResponseDto[]; pagination: PaginationDetailsDto }> {
-    const { page = 1, limit = 10 } = paginationDto;
+  async getAllCustomers(queryDto: CustomerListQueryDto): Promise<{ data: CustomerResponseDto[]; pagination: PaginationDetailsDto }> {
+    const { page = 1, limit = 10, search, status, sortBy = 'created_date', sortOrder = 'desc' } = queryDto;
     const skip = (page - 1) * limit;
 
-    const items = await this.customerRepository.findMany({
-      skip,
-      take: limit,
-      orderBy: { id: 'desc' },
-    });
-    const totalCount = await this.customerRepository.count();
+    // Build where clause for filtering
+    const where: any = {};
+    if (status) {
+      where.status = status;
+    }
+    if (search) {
+      where.OR = [
+        { customer_name: { contains: search } },
+        { contact_email: { contains: search } }
+      ];
+    }
 
-    const data = items.map((r) => this.mapDbToDto(r));
+    // Build orderBy clause for sorting
+    let orderBy: any = { created_at: 'desc' }; // Default
+    if (sortBy === 'customer_name') {
+      orderBy = { customer_name: sortOrder };
+    } else if (sortBy === 'contact_email') {
+      orderBy = { contact_email: sortOrder };
+    } else if (sortBy === 'created_date') {
+      orderBy = { created_at: sortOrder };
+    }
+
+    // Get paginated results
+    const [items, totalCount] = await Promise.all([
+      this.customerRepository.findMany({
+        skip,
+        take: limit,
+        where,
+        orderBy,
+      }),
+      this.customerRepository.count(where)
+    ]);
+
+    const data = items.map((item) => this.mapDbToDto(item));
     const totalPages = Math.ceil(totalCount / limit);
 
     const pagination: PaginationDetailsDto = {
-      pageNo: page,
-      pageSize: limit,
-      totalCount,
-      totalPages,
+      currentPage: page,
+      limit: limit,
+      totalPages: totalPages,
+      totalCustomers: totalCount,
     };
 
     return { data, pagination };
   }
 
-  async getCustomerById(id: string): Promise<CustomerResponseDto> {
+  async getCustomerById(id: string): Promise<any> {
     const customer = await this.customerRepository.findById(id);
     if (!customer) {
       throw new NotFoundException(`Customer with ID ${id} not found`);
     }
-    return this.mapDbToDto(customer);
+
+    // Fetch all events for this customer
+    let events = [];
+    try {
+      const customerEvents = await this.customerRepository.findEventsByCustomerId(id);
+      events = customerEvents || [];
+    } catch (error) {
+      console.log('Error fetching events:', error);
+      events = [];
+    }
+    
+    const customerData = this.mapDbToDto(customer);
+    
+    return {
+      ...customerData,
+      events: events
+    };
   }
 
   async updateCustomer(id: string, updateCustomerDto: UpdateCustomerDto): Promise<CustomerResponseDto> {
@@ -91,11 +142,8 @@ export class CustomerDbService {
       customer_name: updateCustomerDto.customerName,
       contact_email: updateCustomerDto.contactEmail,
       contact_phone: updateCustomerDto.contactPhone ?? undefined,
-      company_id: updateCustomerDto.companyId !== undefined ? updateCustomerDto.companyId : undefined,
-      company_name: updateCustomerDto.companyName ?? undefined,
       location: (updateCustomerDto.location as any) ?? undefined,
-      status: updateCustomerDto.status ?? undefined,
-      total_events: updateCustomerDto.totalEvents ?? undefined,
+      country_code: updateCustomerDto.countryCode ?? undefined,
       updated_at: new Date(),
     });
 
@@ -138,5 +186,12 @@ export class CustomerDbService {
       updated_at: new Date() 
     });
     return this.mapDbToDto(updated);
+  }
+
+  /**
+   * Get all customers metadata
+   */
+  async getCustomersMetadata(search?: string) {
+    return await this.customerRepository.getCustomersMetadata(search);
   }
 }

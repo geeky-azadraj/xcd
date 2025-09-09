@@ -14,6 +14,7 @@ export class CustomerDbRepository {
     company_id: string;
     company_name?: string | null;
     location?: JsonValue;
+    country_code?: string | null;
     status: string;
     total_events: number;
     created_by: string;
@@ -23,6 +24,13 @@ export class CustomerDbRepository {
 
   async findById(id: string) {
     return this.db.customers.findUnique({ where: { id } });
+  }
+
+  async findEventsByCustomerId(customerId: string) {
+    return this.db.events.findMany({
+      where: { customer_id: customerId },
+      orderBy: { created_at: 'desc' }
+    });
   }
 
   async findMany(params: {
@@ -70,5 +78,21 @@ export class CustomerDbRepository {
 
   async transaction<T>(fn: (prisma: any) => Promise<T>): Promise<T> {
     return this.db.$transaction(fn);
+  }
+
+  /**
+   * Get all customers metadata
+   */
+  async getCustomersMetadata(search?: string) {
+    const whereClause = search ? {
+      company_name: {
+        contains: search.toLowerCase(),
+      }
+    } : {};
+  
+    return await this.db.customer_company_metadata.findMany({
+      where: whereClause,
+      orderBy: { company_name: 'asc' },
+    });
   }
 }

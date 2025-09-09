@@ -2,17 +2,17 @@
 -- Users table - 10 users with different types (admin, customer)
 
 -- Insert users
-INSERT INTO users (id, email, password_hash, full_name, avatar_url, phone, user_type, status, sso_provider, sso_user_id, last_login_at, created_at, updated_at) VALUES
-('550e8400-e29b-41d4-a716-446655440001', 'admin1@example.com', '$2b$10$example_hash_1', 'John Admin', 'https://example.com/avatar1.jpg', '+1234567890', 'admin', 'active', NULL, NULL, '2024-01-15 10:30:00', '2024-01-01 00:00:00', '2024-01-15 10:30:00'),
-('550e8400-e29b-41d4-a716-446655440002', 'admin2@example.com', '$2b$10$example_hash_2', 'Sarah Admin', 'https://example.com/avatar2.jpg', '+1234567891', 'admin', 'active', 'google', 'google_123456', '2024-01-14 14:20:00', '2024-01-02 00:00:00', '2024-01-14 14:20:00'),
-('550e8400-e29b-41d4-a716-446655440003', 'customer1@example.com', '$2b$10$example_hash_3', 'Alice Customer', 'https://example.com/avatar3.jpg', '+1234567892', 'customer', 'active', NULL, NULL, '2024-01-13 09:15:00', '2024-01-03 00:00:00', '2024-01-13 09:15:00'),
-('550e8400-e29b-41d4-a716-446655440004', 'customer2@example.com', '$2b$10$example_hash_4', 'Bob Customer', 'https://example.com/avatar4.jpg', '+1234567893', 'customer', 'active', 'google', 'google_789012', '2024-01-12 16:45:00', '2024-01-04 00:00:00', '2024-01-12 16:45:00'),
-('550e8400-e29b-41d4-a716-446655440005', 'customer3@example.com', '$2b$10$example_hash_5', 'Carol Customer', 'https://example.com/avatar5.jpg', '+1234567894', 'customer', 'active', NULL, NULL, '2024-01-11 11:30:00', '2024-01-05 00:00:00', '2024-01-11 11:30:00'),
-('550e8400-e29b-41d4-a716-446655440006', 'customer4@example.com', '$2b$10$example_hash_6', 'David Customer', 'https://example.com/avatar6.jpg', '+1234567895', 'customer', 'active', 'google', 'google_345678', '2024-01-10 13:20:00', '2024-01-06 00:00:00', '2024-01-10 13:20:00'),
-('550e8400-e29b-41d4-a716-446655440007', 'customer5@example.com', '$2b$10$example_hash_7', 'Emma Customer', 'https://example.com/avatar7.jpg', '+1234567896', 'customer', 'active', NULL, NULL, '2024-01-09 08:45:00', '2024-01-07 00:00:00', '2024-01-09 08:45:00'),
-('550e8400-e29b-41d4-a716-446655440008', 'customer6@example.com', '$2b$10$example_hash_8', 'Frank Customer', 'https://example.com/avatar8.jpg', '+1234567897', 'customer', 'active', 'google', 'google_901234', '2024-01-08 15:10:00', '2024-01-08 00:00:00', '2024-01-08 15:10:00'),
-('550e8400-e29b-41d4-a716-446655440009', 'customer7@example.com', '$2b$10$example_hash_9', 'Grace Customer', 'https://example.com/avatar9.jpg', '+1234567898', 'customer', 'active', NULL, NULL, '2024-01-07 12:25:00', '2024-01-09 00:00:00', '2024-01-07 12:25:00'),
-('550e8400-e29b-41d4-a716-446655440010', 'customer8@example.com', '$2b$10$example_hash_10', 'Henry Customer', 'https://example.com/avatar10.jpg', '+1234567899', 'customer', 'active', 'google', 'google_567890', '2024-01-06 17:40:00', '2024-01-10 00:00:00', '2024-01-06 17:40:00');
+INSERT INTO users (id, email, password_hash, full_name, avatar_url, phone, user_type, status, last_login_at, created_at, updated_at) VALUES
+('550e8400-e29b-41d4-a716-446655440001', 'admin1@example.com', '$2b$10$example_hash_1', 'John Admin', 'https://example.com/avatar1.jpg', '+1234567890', 'admin', 'active', '2024-01-15 10:30:00', '2024-01-01 00:00:00', '2024-01-15 10:30:00'),
+('550e8400-e29b-41d4-a716-446655440002', 'admin2@example.com', '$2b$10$example_hash_2', 'Sarah Admin', 'https://example.com/avatar2.jpg', '+1234567891', 'admin', 'active', '2024-01-14 14:20:00', '2024-01-02 00:00:00', '2024-01-14 14:20:00'),
+('550e8400-e29b-41d4-a716-446655440003', 'customer1@example.com', '$2b$10$example_hash_3', 'Alice Customer', 'https://example.com/avatar3.jpg', '+1234567892', 'customer', 'active', '2024-01-13 09:15:00', '2024-01-03 00:00:00', '2024-01-13 09:15:00'),
+('550e8400-e29b-41d4-a716-446655440004', 'customer2@example.com', '$2b$10$example_hash_4', 'Bob Customer', 'https://example.com/avatar4.jpg', '+1234567893', 'customer', 'active', '2024-01-12 16:45:00', '2024-01-04 00:00:00', '2024-01-12 16:45:00'),
+('550e8400-e29b-41d4-a716-446655440005', 'customer3@example.com', '$2b$10$example_hash_5', 'Carol Customer', 'https://example.com/avatar5.jpg', '+1234567894', 'customer', 'active', '2024-01-11 11:30:00', '2024-01-05 00:00:00', '2024-01-11 11:30:00'),
+('550e8400-e29b-41d4-a716-446655440006', 'customer4@example.com', '$2b$10$example_hash_6', 'David Customer', 'https://example.com/avatar6.jpg', '+1234567895', 'customer', 'active', '2024-01-10 13:20:00', '2024-01-06 00:00:00', '2024-01-10 13:20:00'),
+('550e8400-e29b-41d4-a716-446655440007', 'customer5@example.com', '$2b$10$example_hash_7', 'Emma Customer', 'https://example.com/avatar7.jpg', '+1234567896', 'customer', 'active', '2024-01-09 08:45:00', '2024-01-07 00:00:00', '2024-01-09 08:45:00'),
+('550e8400-e29b-41d4-a716-446655440008', 'customer6@example.com', '$2b$10$example_hash_8', 'Frank Customer', 'https://example.com/avatar8.jpg', '+1234567897', 'customer', 'active', '2024-01-08 15:10:00', '2024-01-08 00:00:00', '2024-01-08 15:10:00'),
+('550e8400-e29b-41d4-a716-446655440009', 'customer7@example.com', '$2b$10$example_hash_9', 'Grace Customer', 'https://example.com/avatar9.jpg', '+1234567898', 'customer', 'active', '2024-01-07 12:25:00', '2024-01-09 00:00:00', '2024-01-07 12:25:00'),
+('550e8400-e29b-41d4-a716-446655440010', 'customer8@example.com', '$2b$10$example_hash_10', 'Henry Customer', 'https://example.com/avatar10.jpg', '+1234567899', 'customer', 'active', '2024-01-06 17:40:00', '2024-01-10 00:00:00', '2024-01-06 17:40:00');
 
 -- Customer company metadata
 INSERT INTO customer_company_metadata (id, company_name, created_at, updated_at) VALUES
@@ -69,3 +69,22 @@ INSERT INTO events (id, customer_id, event_name, event_type, event_description, 
 -- Events for customer-008 (Henry Customer)
 ('6ba7b82e-9dad-11d1-80b4-00c04fd430c8', '6ba7b81f-9dad-11d1-80b4-00c04fd430c8', 'Tech Hub Conference', 'conference', 'International technology hub conference', '{"venue": "Tech Hub Center", "address": "888 Innovation Drive, San Diego, CA", "city": "San Diego", "state": "CA", "zip": "92101"}', '2025-08-15', '2025-08-17', '2025-05-01', '2025-08-10', 'USD', 'published', 'https://example.com/logo15.jpg', 'Kevin', 'Support', 'techhub@eventhub.com', '+1234567015', 'https://support.eventhub.com', 'conference', '2024-01-10 00:00:00', '2024-01-10 00:00:00'),
 ('6ba7b82f-9dad-11d1-80b4-00c04fd430c8', '6ba7b81f-9dad-11d1-80b4-00c04fd430c8', 'Startup Pitch Event', 'pitch', 'Startup pitch competition and networking', '{"venue": "Innovation Center", "address": "999 Startup Street, San Diego, CA", "city": "San Diego", "state": "CA", "zip": "92102"}', '2025-09-25', '2025-09-25', '2025-06-01', '2025-09-20', 'USD', 'draft', 'https://example.com/logo16.jpg', 'Rachel', 'Support', 'startup@eventhub.com', '+1234567016', 'https://support.eventhub.com', 'business', '2024-01-10 00:00:00', '2024-01-10 00:00:00');
+
+-- Event metadata table - metadata for all events
+INSERT INTO event_metadata (id, event_name, created_at, updated_at) VALUES
+('7ba7b820-9dad-11d1-80b4-00c04fd430c8', 'Tech Conference 2024', '2024-01-03 00:00:00', '2024-01-03 00:00:00'),
+('7ba7b821-9dad-11d1-80b4-00c04fd430c8', 'AI Workshop Series', '2024-01-03 00:00:00', '2024-01-03 00:00:00'),
+('7ba7b822-9dad-11d1-80b4-00c04fd430c8', 'Music Festival 2024', '2024-01-04 00:00:00', '2024-01-04 00:00:00'),
+('7ba7b823-9dad-11d1-80b4-00c04fd430c8', 'Corporate Gala', '2024-01-04 00:00:00', '2024-01-04 00:00:00'),
+('7ba7b824-9dad-11d1-80b4-00c04fd430c8', 'Global Summit 2024', '2024-01-05 00:00:00', '2024-01-05 00:00:00'),
+('7ba7b825-9dad-11d1-80b4-00c04fd430c8', 'Trade Show Expo', '2024-01-05 00:00:00', '2024-01-05 00:00:00'),
+('7ba7b826-9dad-11d1-80b4-00c04fd430c8', 'MegaCon 2024', '2024-01-06 00:00:00', '2024-01-06 00:00:00'),
+('7ba7b827-9dad-11d1-80b4-00c04fd430c8', 'Gaming Tournament', '2024-01-06 00:00:00', '2024-01-06 00:00:00'),
+('7ba7b828-9dad-11d1-80b4-00c04fd430c8', 'Master Class Series', '2024-01-07 00:00:00', '2024-01-07 00:00:00'),
+('7ba7b829-9dad-11d1-80b4-00c04fd430c8', 'Leadership Retreat', '2024-01-07 00:00:00', '2024-01-07 00:00:00'),
+('7ba7b82a-9dad-11d1-80b4-00c04fd430c8', 'ShowTime Broadway', '2024-01-08 00:00:00', '2024-01-08 00:00:00'),
+('7ba7b82b-9dad-11d1-80b4-00c04fd430c8', 'Comedy Night', '2024-01-08 00:00:00', '2024-01-08 00:00:00'),
+('7ba7b82c-9dad-11d1-80b4-00c04fd430c8', 'Wedding Expo', '2024-01-09 00:00:00', '2024-01-09 00:00:00'),
+('7ba7b82d-9dad-11d1-80b4-00c04fd430c8', 'Anniversary Gala', '2024-01-09 00:00:00', '2024-01-09 00:00:00'),
+('7ba7b82e-9dad-11d1-80b4-00c04fd430c8', 'Tech Hub Conference', '2024-01-10 00:00:00', '2024-01-10 00:00:00'),
+('7ba7b82f-9dad-11d1-80b4-00c04fd430c8', 'Startup Pitch Event', '2024-01-10 00:00:00', '2024-01-10 00:00:00');

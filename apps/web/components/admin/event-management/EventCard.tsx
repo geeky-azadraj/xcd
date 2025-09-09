@@ -14,7 +14,7 @@ interface EventCardProps {
 }
 
 function EventCard({ event, onActivate, onDeactivate, onDelete }: EventCardProps) {
-  const isInactive = event.status === 'INACTIVE'
+  const isInactive = event.status === 'inactive'
 
   const handleManageEvent = () => {
     console.log('Manage event:', event.id)

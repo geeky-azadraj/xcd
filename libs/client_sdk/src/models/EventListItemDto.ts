@@ -20,6 +20,12 @@ import { mapValues } from '../runtime';
  */
 export interface EventListItemDto {
     /**
+     * Id of the event
+     * @type {string}
+     * @memberof EventListItemDto
+     */
+    id: string;
+    /**
      * Event logo URL
      * @type {string}
      * @memberof EventListItemDto
@@ -72,6 +78,7 @@ export type EventListItemDtoStatusEnum = typeof EventListItemDtoStatusEnum[keyof
  * Check if a given object implements the EventListItemDto interface.
  */
 export function instanceOfEventListItemDto(value: object): value is EventListItemDto {
+    if (!('id' in value) || value['id'] === undefined) return false;
     if (!('eventLogo' in value) || value['eventLogo'] === undefined) return false;
     if (!('eventName' in value) || value['eventName'] === undefined) return false;
     if (!('eventType' in value) || value['eventType'] === undefined) return false;
@@ -91,6 +98,7 @@ export function EventListItemDtoFromJSONTyped(json: any, ignoreDiscriminator: bo
     }
     return {
         
+        'id': json['id'],
         'eventLogo': json['eventLogo'],
         'eventName': json['eventName'],
         'eventType': json['eventType'],
@@ -106,6 +114,7 @@ export function EventListItemDtoToJSON(value?: EventListItemDto | null): any {
     }
     return {
         
+        'id': value['id'],
         'eventLogo': value['eventLogo'],
         'eventName': value['eventName'],
         'eventType': value['eventType'],

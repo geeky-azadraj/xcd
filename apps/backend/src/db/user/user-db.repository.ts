@@ -21,8 +21,6 @@ export class UserDBRepository {
                 user_type: RoleType.ADMIN,
                 status: 'active',
                 avatar_url: ssoUser.avatar,
-                sso_provider: 'google',
-                sso_user_id: ssoUser.provider_id,
                 last_login_at: new Date(),
             },
         });
@@ -40,9 +38,7 @@ export class UserDBRepository {
                 avatar_url: userData.avatarUrl,
                 phone: userData.phone,
                 user_type: userData.userType,
-                status: userData.status || 'active',
-                sso_provider: userData.ssoProvider,
-                sso_user_id: userData.ssoUserId,
+                status: userData.status || 'active'
             },
         });
     }

@@ -4,18 +4,15 @@ import { useState, useEffect } from "react"
 import { useRouter, usePathname, useSearchParams } from "next/navigation"
 import EventsBody from "@/components/admin/event-management/EventsBody"
 import EventsHeader from "@/components/admin/event-management/EventsHeader"
-import { TabKey } from "./page"
+import type { MyEventsContentProps, TabKey } from "./types"
 
-interface MyEventsContentProps {
-  userId: string
-  initialActiveTab: TabKey
-}
-
-function MyEventsContent({ userId, initialActiveTab }: MyEventsContentProps) {
+function MyEventsContent({ userId, initialActiveTab, events }: MyEventsContentProps) {
   const [activeTab, setActiveTab] = useState<TabKey>(initialActiveTab)
   const router = useRouter()
   const pathname = usePathname()
   const searchParams = useSearchParams()
+
+  // Events are now passed as props from MyEventsWrapper
 
   // Update activeTab when URL changes
   useEffect(() => {
@@ -51,6 +48,7 @@ function MyEventsContent({ userId, initialActiveTab }: MyEventsContentProps) {
               userId={userId}
               activeTab={activeTab}
               onTabChange={handleTabChange}
+              events={events}
             />
           </div>
         </div>
@@ -59,7 +57,7 @@ function MyEventsContent({ userId, initialActiveTab }: MyEventsContentProps) {
       {/** The table data will come here */}
 
       <div className="bg-gray-50 min-h-screen">
-        <EventsBody userId={userId} activeTab={activeTab} />
+        <EventsBody userId={userId} activeTab={activeTab} events={events} />
       </div>
     </div>
   )

@@ -42,18 +42,20 @@ const configService = new ConfigService<EnvConfig>();
 const enableRedis = (configService.get('ENABLE_REDIS' as any) as string) === 'true';
 
 // Queue module - only create if Redis is enabled
-const queueModule = enableRedis ? BullModule.forRootAsync({
-  imports: [RedisModule],
-  useFactory: (redisClient: Redis) => {
-    Logger.log(`Connecting to Redis using predefined client`);
-    return {
-      prefix: QueuePrefix.SYSTEM, // For grouping queues
-      connection: redisClient.options,
-      defaultJobOptions: DEFAULT_JOB_OPTIONS,
-    };
-  },
-  inject: [REDIS_CLIENT],
-}) : null;
+const queueModule = enableRedis
+  ? BullModule.forRootAsync({
+      imports: [RedisModule],
+      useFactory: (redisClient: Redis) => {
+        Logger.log(`Connecting to Redis using predefined client`);
+        return {
+          prefix: QueuePrefix.SYSTEM, // For grouping queues
+          connection: redisClient.options,
+          defaultJobOptions: DEFAULT_JOB_OPTIONS,
+        };
+      },
+      inject: [REDIS_CLIENT],
+    })
+  : null;
 
 // Rate Limiting
 const rateLimit = ThrottlerModule.forRoot([
@@ -80,25 +82,27 @@ const rateLimit = ThrottlerModule.forRoot([
 ]);
 
 // Cache Module - only create if Redis is enabled
-const cacheModule = enableRedis ? CacheModule.registerAsync({
-  useFactory: async () => {
-    const store = await redisStore({
-      socket: {
-        host: configService.get<string>('REDIS_HOST'),
-        port: configService.get<number>('REDIS_PORT'),
-      },
-    });
+const cacheModule = enableRedis
+  ? CacheModule.registerAsync({
+      useFactory: async () => {
+        const store = await redisStore({
+          socket: {
+            host: configService.get<string>('REDIS_HOST'),
+            port: configService.get<number>('REDIS_PORT'),
+          },
+        });
 
-    return {
-      store: store,
+        return {
+          store: store,
+          ttl: 5 * 60000, // Default - 5 minutes (milliseconds)
+        };
+      },
+      isGlobal: true,
+    })
+  : CacheModule.register({
+      isGlobal: true,
       ttl: 5 * 60000, // Default - 5 minutes (milliseconds)
-    };
-  },
-  isGlobal: true,
-}) : CacheModule.register({
-  isGlobal: true,
-  ttl: 5 * 60000, // Default - 5 minutes (milliseconds)
-});
+    });
 
 @Module({
   imports: [
@@ -128,7 +132,7 @@ const cacheModule = enableRedis ? CacheModule.registerAsync({
     CustomerModule,
     PlacesModule,
     EventModule,
-    UserModule
+    UserModule,
   ],
   providers: [
     ErrorHandlerService,
@@ -155,12 +159,17 @@ export class AppModule {
     // Apply to all routes
     consumer.apply(MetricsMiddleware).forRoutes('*');
     consumer.apply(CookieAuthMiddleware).forRoutes('*');
+    // Temporarily disable authentication middleware for testing
     // consumer.apply(AccessTokenVerificationMiddleware)
-    // .exclude({ path: ':version/auth/(.*)', method: RequestMethod.ALL })
+    // .exclude(
+    //   { path: 'v1/auth/*', method: RequestMethod.ALL },
+    //   { path: 'v1/places/*', method: RequestMethod.ALL },
+    //   { path: 'v1/health', method: RequestMethod.GET }
+    // )
     // .forRoutes('*');
-    // consumer
-    // .apply(RefreshTokenVerificationMiddleware)
-    // .forRoutes({ path: ':version/auth/refresh', method: RequestMethod.POST });
+    consumer
+      .apply(RefreshTokenVerificationMiddleware)
+      .forRoutes({ path: ':version/auth/refresh', method: RequestMethod.POST });
     consumer
       .apply(DevToolsMiddleware)
       .forRoutes(

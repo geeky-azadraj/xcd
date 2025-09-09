@@ -20,12 +20,6 @@ import { mapValues } from '../runtime';
  */
 export interface UpdateCustomerDto {
     /**
-     * XCD Customer user ID
-     * @type {string}
-     * @memberof UpdateCustomerDto
-     */
-    userId?: string;
-    /**
      * Customer name
      * @type {string}
      * @memberof UpdateCustomerDto
@@ -44,48 +38,18 @@ export interface UpdateCustomerDto {
      */
     contactPhone?: string;
     /**
-     * Company ID
-     * @type {string}
-     * @memberof UpdateCustomerDto
-     */
-    companyId?: string;
-    /**
-     * Company name
-     * @type {string}
-     * @memberof UpdateCustomerDto
-     */
-    companyName?: string;
-    /**
      * Customer location
      * @type {object}
      * @memberof UpdateCustomerDto
      */
     location?: object;
     /**
-     * Customer status
+     * Phone country code (e.g., +1, +44, +91)
      * @type {string}
      * @memberof UpdateCustomerDto
      */
-    status?: UpdateCustomerDtoStatusEnum;
-    /**
-     * Total events count
-     * @type {number}
-     * @memberof UpdateCustomerDto
-     */
-    totalEvents?: number;
+    countryCode?: string;
 }
-
-
-/**
- * @export
- */
-export const UpdateCustomerDtoStatusEnum = {
-    Active: 'active',
-    Inactive: 'inactive',
-    Deleted: 'deleted'
-} as const;
-export type UpdateCustomerDtoStatusEnum = typeof UpdateCustomerDtoStatusEnum[keyof typeof UpdateCustomerDtoStatusEnum];
-
 
 /**
  * Check if a given object implements the UpdateCustomerDto interface.
@@ -104,15 +68,11 @@ export function UpdateCustomerDtoFromJSONTyped(json: any, ignoreDiscriminator: b
     }
     return {
         
-        'userId': json['userId'] == null ? undefined : json['userId'],
         'customerName': json['customerName'] == null ? undefined : json['customerName'],
         'contactEmail': json['contactEmail'] == null ? undefined : json['contactEmail'],
         'contactPhone': json['contactPhone'] == null ? undefined : json['contactPhone'],
-        'companyId': json['companyId'] == null ? undefined : json['companyId'],
-        'companyName': json['companyName'] == null ? undefined : json['companyName'],
         'location': json['location'] == null ? undefined : json['location'],
-        'status': json['status'] == null ? undefined : json['status'],
-        'totalEvents': json['totalEvents'] == null ? undefined : json['totalEvents'],
+        'countryCode': json['countryCode'] == null ? undefined : json['countryCode'],
     };
 }
 
@@ -122,15 +82,11 @@ export function UpdateCustomerDtoToJSON(value?: UpdateCustomerDto | null): any {
     }
     return {
         
-        'userId': value['userId'],
         'customerName': value['customerName'],
         'contactEmail': value['contactEmail'],
         'contactPhone': value['contactPhone'],
-        'companyId': value['companyId'],
-        'companyName': value['companyName'],
         'location': value['location'],
-        'status': value['status'],
-        'totalEvents': value['totalEvents'],
+        'countryCode': value['countryCode'],
     };
 }
 

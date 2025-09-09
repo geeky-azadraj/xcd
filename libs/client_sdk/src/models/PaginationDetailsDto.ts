@@ -24,35 +24,35 @@ export interface PaginationDetailsDto {
      * @type {number}
      * @memberof PaginationDetailsDto
      */
-    pageNo: number;
+    currentPage: number;
     /**
      * Number of items per page
      * @type {number}
      * @memberof PaginationDetailsDto
      */
-    pageSize: number;
-    /**
-     * Total number of items available
-     * @type {number}
-     * @memberof PaginationDetailsDto
-     */
-    totalCount: number;
+    limit: number;
     /**
      * Total number of pages available
      * @type {number}
      * @memberof PaginationDetailsDto
      */
     totalPages: number;
+    /**
+     * Total number of customers
+     * @type {number}
+     * @memberof PaginationDetailsDto
+     */
+    totalCustomers: number;
 }
 
 /**
  * Check if a given object implements the PaginationDetailsDto interface.
  */
 export function instanceOfPaginationDetailsDto(value: object): value is PaginationDetailsDto {
-    if (!('pageNo' in value) || value['pageNo'] === undefined) return false;
-    if (!('pageSize' in value) || value['pageSize'] === undefined) return false;
-    if (!('totalCount' in value) || value['totalCount'] === undefined) return false;
+    if (!('currentPage' in value) || value['currentPage'] === undefined) return false;
+    if (!('limit' in value) || value['limit'] === undefined) return false;
     if (!('totalPages' in value) || value['totalPages'] === undefined) return false;
+    if (!('totalCustomers' in value) || value['totalCustomers'] === undefined) return false;
     return true;
 }
 
@@ -66,10 +66,10 @@ export function PaginationDetailsDtoFromJSONTyped(json: any, ignoreDiscriminator
     }
     return {
         
-        'pageNo': json['pageNo'],
-        'pageSize': json['pageSize'],
-        'totalCount': json['totalCount'],
+        'currentPage': json['currentPage'],
+        'limit': json['limit'],
         'totalPages': json['totalPages'],
+        'totalCustomers': json['totalCustomers'],
     };
 }
 
@@ -79,10 +79,10 @@ export function PaginationDetailsDtoToJSON(value?: PaginationDetailsDto | null):
     }
     return {
         
-        'pageNo': value['pageNo'],
-        'pageSize': value['pageSize'],
-        'totalCount': value['totalCount'],
+        'currentPage': value['currentPage'],
+        'limit': value['limit'],
         'totalPages': value['totalPages'],
+        'totalCustomers': value['totalCustomers'],
     };
 }
 

@@ -22,19 +22,19 @@ export class PaginationDto {
 export class PaginationDetailsDto {
   @ApiProperty({ description: 'Current page number' })
   @IsNumber()
-  pageNo: number;
+  currentPage: number;
 
   @ApiProperty({ description: 'Number of items per page' })
   @IsNumber()
-  pageSize: number;
-
-  @ApiProperty({ description: 'Total number of items available' })
-  @IsNumber()
-  totalCount: number;
+  limit: number;
 
   @ApiProperty({ description: 'Total number of pages available' })
   @IsNumber()
   totalPages: number;
+
+  @ApiProperty({ description: 'Total number of customers' })
+  @IsNumber()
+  totalCustomers: number;
 }
 
 export class CustomerListResponseDto {

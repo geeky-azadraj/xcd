@@ -12,13 +12,29 @@ export class TransformInterceptor<T> implements NestInterceptor<T, ApiResponse<T
       const request = context.switchToHttp().getRequest();
 
       // Exclude specific routes
-      if (request.url.includes(RouteNames.METRICS) || request.url.includes(RouteNames.HEALTH)) {
+      if (request.url.includes(RouteNames.METRICS) || 
+          request.url.includes(RouteNames.HEALTH) ||
+          request.url.includes('/customers')) {
         return next.handle();
       }
 
       return next.handle().pipe(
         map((data) => {
           const response = context.switchToHttp().getResponse();
+          
+          // Handle paginated responses (when data has both data and pagination fields)
+          if (data && typeof data === 'object' && 'data' in data && 'pagination' in data) {
+            return {
+              statusCode: data?.statusCode || response?.statusCode || 200,
+              status: data?.status || 'Success',
+              message: data?.message || 'Request successful',
+              data: data.data,
+              pagination: data.pagination,
+              error: data?.error || null,
+            };
+          }
+          
+          // Handle regular responses
           return {
             statusCode: data?.statusCode || response?.statusCode || 200,
             status: data?.status || 'Success',

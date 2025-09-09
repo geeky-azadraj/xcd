@@ -68,6 +68,12 @@ export interface CustomerResponseDto {
      */
     location?: object;
     /**
+     * Phone country code (e.g., +1, +44, +91)
+     * @type {string}
+     * @memberof CustomerResponseDto
+     */
+    countryCode?: string;
+    /**
      * Customer status
      * @type {string}
      * @memberof CustomerResponseDto
@@ -146,6 +152,7 @@ export function CustomerResponseDtoFromJSONTyped(json: any, ignoreDiscriminator:
         'companyId': json['companyId'],
         'companyName': json['companyName'] == null ? undefined : json['companyName'],
         'location': json['location'] == null ? undefined : json['location'],
+        'countryCode': json['countryCode'] == null ? undefined : json['countryCode'],
         'status': json['status'],
         'totalEvents': json['totalEvents'],
         'createdBy': json['createdBy'],
@@ -168,6 +175,7 @@ export function CustomerResponseDtoToJSON(value?: CustomerResponseDto | null): a
         'companyId': value['companyId'],
         'companyName': value['companyName'],
         'location': value['location'],
+        'countryCode': value['countryCode'],
         'status': value['status'],
         'totalEvents': value['totalEvents'],
         'createdBy': value['createdBy'],

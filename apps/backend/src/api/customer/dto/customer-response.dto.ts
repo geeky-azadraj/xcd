@@ -59,6 +59,13 @@ export class CustomerResponseDto {
   location?: CustomerLocation;
 
   @ApiProperty({
+    description: 'Phone country code (e.g., +1, +44, +91)',
+    example: '+1',
+    required: false,
+  })
+  countryCode?: string;
+
+  @ApiProperty({
     description: 'Customer status',
     enum: ['active', 'inactive', 'deleted'],
     example: 'active',

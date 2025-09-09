@@ -20,12 +20,6 @@ import { mapValues } from '../runtime';
  */
 export interface CreateCustomerDto {
     /**
-     * XCD Customer user ID
-     * @type {string}
-     * @memberof CreateCustomerDto
-     */
-    userId: string;
-    /**
      * Customer name
      * @type {string}
      * @memberof CreateCustomerDto
@@ -44,58 +38,25 @@ export interface CreateCustomerDto {
      */
     contactPhone?: string;
     /**
-     * Company ID
-     * @type {string}
-     * @memberof CreateCustomerDto
-     */
-    companyId: string;
-    /**
-     * Company name
-     * @type {string}
-     * @memberof CreateCustomerDto
-     */
-    companyName?: string;
-    /**
      * Customer location
      * @type {object}
      * @memberof CreateCustomerDto
      */
     location?: object;
     /**
-     * Customer status
+     * Phone country code (e.g., +1, +44, +91)
      * @type {string}
      * @memberof CreateCustomerDto
      */
-    status: CreateCustomerDtoStatusEnum;
-    /**
-     * Total events count
-     * @type {number}
-     * @memberof CreateCustomerDto
-     */
-    totalEvents?: number;
+    countryCode?: string;
 }
-
-
-/**
- * @export
- */
-export const CreateCustomerDtoStatusEnum = {
-    Active: 'active',
-    Inactive: 'inactive',
-    Deleted: 'deleted'
-} as const;
-export type CreateCustomerDtoStatusEnum = typeof CreateCustomerDtoStatusEnum[keyof typeof CreateCustomerDtoStatusEnum];
-
 
 /**
  * Check if a given object implements the CreateCustomerDto interface.
  */
 export function instanceOfCreateCustomerDto(value: object): value is CreateCustomerDto {
-    if (!('userId' in value) || value['userId'] === undefined) return false;
     if (!('customerName' in value) || value['customerName'] === undefined) return false;
     if (!('contactEmail' in value) || value['contactEmail'] === undefined) return false;
-    if (!('companyId' in value) || value['companyId'] === undefined) return false;
-    if (!('status' in value) || value['status'] === undefined) return false;
     return true;
 }
 
@@ -109,15 +70,11 @@ export function CreateCustomerDtoFromJSONTyped(json: any, ignoreDiscriminator: b
     }
     return {
         
-        'userId': json['userId'],
         'customerName': json['customerName'],
         'contactEmail': json['contactEmail'],
         'contactPhone': json['contactPhone'] == null ? undefined : json['contactPhone'],
-        'companyId': json['companyId'],
-        'companyName': json['companyName'] == null ? undefined : json['companyName'],
         'location': json['location'] == null ? undefined : json['location'],
-        'status': json['status'],
-        'totalEvents': json['totalEvents'] == null ? undefined : json['totalEvents'],
+        'countryCode': json['countryCode'] == null ? undefined : json['countryCode'],
     };
 }
 
@@ -127,15 +84,11 @@ export function CreateCustomerDtoToJSON(value?: CreateCustomerDto | null): any {
     }
     return {
         
-        'userId': value['userId'],
         'customerName': value['customerName'],
         'contactEmail': value['contactEmail'],
         'contactPhone': value['contactPhone'],
-        'companyId': value['companyId'],
-        'companyName': value['companyName'],
         'location': value['location'],
-        'status': value['status'],
-        'totalEvents': value['totalEvents'],
+        'countryCode': value['countryCode'],
     };
 }
 

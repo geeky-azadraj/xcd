@@ -1,36 +1,32 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { mockEvents } from "@/app/admin/(event-management)/[userId]/my-events/data"
-import { TabKey } from "@/app/admin/(event-management)/[userId]/my-events/page"
+import type { TabKey } from "@/components/admin/event-management/types"
 
 interface EventsHeaderProps {
   userId: string
   activeTab: TabKey
   onTabChange: (tab: TabKey) => void
+  events?: any[] // Array of events from API
 }
 
-function EventsHeader({ userId, activeTab, onTabChange }: EventsHeaderProps) {
+function EventsHeader({ userId, activeTab, onTabChange, events }: EventsHeaderProps) {
   const [counts, setCounts] = useState({ all: 0, active: 0, inactive: 0 })
 
-  // For now, using static counts from initial mock data
-  // TODO: When integrating with API, pass actual event counts as props from parent
-  // The parent component will get these counts from the API response
-  // Example: const { data, totalCount, activeCount, inactiveCount } = useGetEvents({ userId })
-  
+  // Calculate counts from real events data
   useEffect(() => {
-    // Calculate counts from mock data filtered by userId
-    const userEvents = mockEvents.filter(event => event.userId === userId)
-    const allCount = userEvents.length
-    const activeCount = userEvents.filter(event => event.status === 'ACTIVE').length
-    const inactiveCount = userEvents.filter(event => event.status === 'INACTIVE').length
-    
-    setCounts({
-      all: allCount,
-      active: activeCount,
-      inactive: inactiveCount
-    })
-  }, [userId]) // Recalculate when userId changes
+    if (events && events.length > 0) {
+      const allCount = events.length
+      const activeCount = events.filter((event: any) => event.status === 'active').length
+      const inactiveCount = events.filter((event: any) => event.status === 'inactive').length
+      
+      setCounts({
+        all: allCount,
+        active: activeCount,
+        inactive: inactiveCount
+      })
+    }
+  }, [events]) // Recalculate when events change
 
   const tabs = [
     { key: "all" as TabKey, label: "All Events", count: counts.all },
@@ -68,4 +64,3 @@ function EventsHeader({ userId, activeTab, onTabChange }: EventsHeaderProps) {
 }
 
 export default EventsHeader;
-

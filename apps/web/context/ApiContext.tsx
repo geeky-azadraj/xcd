@@ -75,8 +75,6 @@ export const ApiProvider = ({
             if (context.url.includes('/auth/refresh-jwt-token')) {
               throw new Error('Refresh token expired');
             }
-            // Note: AuthApi is not available in current SDK, so this middleware is simplified
-            // You may need to implement custom auth logic or add AuthApi to the SDK
             console.warn('401 Unauthorized - Auth refresh not implemented');
           }
         },

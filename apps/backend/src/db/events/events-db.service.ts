@@ -6,6 +6,7 @@ import { JsonValue } from '@prisma/client/runtime/library';
 import { EventOverviewResponseDto } from '@api/event/dto/event-overview-response.dto';
 
 export interface EventListItem {
+  id: string;
   eventLogo: string;
   eventName: string;
   eventType: string;
@@ -71,7 +72,7 @@ export class EventsDBService {
     }
 
     const events = await this.eventsRepository.getEventsByCustomerId(customer.id, filters);
-    
+
     return this.mapEventsToList(events);
   }
 
@@ -129,7 +130,8 @@ export class EventsDBService {
    * Map events to list format
    */
   private mapEventsToList(events: any[]): EventListItem[] {
-    return events.map(event => ({
+    return events.map((event) => ({
+      id: event.id,
       eventLogo: event.logo_url || '',
       eventName: event.event_name,
       eventType: event.event_type || 'Conference',
@@ -174,5 +176,12 @@ export class EventsDBService {
   private getEventPoliciesSetupStatus(event: any): string {
     // TODO: Implement logic based on event policies
     return 'pending';
+  }
+
+  /**
+   * Get all events metadata
+   */
+  async getEventsMetadata(search?: string) {
+    return await this.eventsRepository.getEventsMetadata(search);
   }
 }
